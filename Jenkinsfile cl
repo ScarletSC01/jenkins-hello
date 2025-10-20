@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    parameters {
+        // Parámetros que el usuario selecciona
+        string(name: 'PROYECT_ID', defaultValue: '', description: 'PROYECT_ID')
+        choice(name: 'REGION', choices: ['us-central1', 'europe-west1', 'asia-east1'], description: 'SELECCIONA LA REGION')
+        choice(name: 'ZONE', choices: ['us-central1-a', 'us-central1-b', 'us-central1-c'], description: 'SELECCIONA LA ZONA')
+        choice(name: 'ENVIRONMENT', choices: ['Beta', 'Prod', 'Dev'], description: 'ENVIRONMENT')
+        string(name: 'VM_NAME', defaultValue: '', description: 'VM_NAME')
+        choice(name: 'PROCESSOR_TECH', choices: ['n2', 'e2'], description: 'PROCESSOR_TECH')
+        choice(name: 'VM_TYPE', choices: ['e2-standard', 'n2-standard'], description: 'VM_TYPE')
+        string(name: 'DISK_SIZE', defaultValue: '', description: 'DISK_SIZE')
+        choice(name: 'OS_TYPE', choices: ['Windows-server-2025-dc', 'Windows-server-2022-dc'], description: 'OS_TYPE')
+        choice(name: 'INFRAESTRUCTURE_TYPE', choices: ['Preemtible', 'On-demand'], description: 'INFRAESTRUCTURE_TYPE')
+        string(name: 'LABEL', defaultValue: '', description: 'LABEL')
+        string(name: 'INTERFACE', defaultValue: '', description: 'INTERFACE')
+        string(name: 'NETWORK_SEGMENT', defaultValue: '', description: 'NETWORK_SEGMENT')
+        // Parámetros con valor booleano (usando 'choice' para reemplazar booleano por opciones de selección)
+        choice(name: 'PRIVATE_IP', choices: ['Habilitar', 'Deshabilitar'], description: 'PRIVATE_IP')
+        string(name: 'FIREWALL_RULES', defaultValue: '', description: 'FIREWALL_RULES')
+        // Parámetros de eliminación automática
+        choice(name: 'CHECK_DELETE', choices: ['Habilitar', 'Deshabilitar'], description: 'CHECK_DELETE')
+    }
+
+    stages {
+        stage('Imprimir Valores de Configuración') {
+            steps {
+                script {
+                    // Imprimir los valores seleccionados por el usuario
+                    echo "PROYECT_ID: ${params.PROYECT_ID}"
+                    echo "REGIÓN A DESPLEGAR: ${params.REGION}"
+                    echo "ZONA A DESPLEGAR: ${params.ZONE}"
+                    echo "AMBIENTE: ${params.ENVIRONMENT}"
+                    echo "VM_NAME: ${params.VM_NAME}"
+                    echo "TIPO DE PROCESADOR: ${params.PROCESSOR_TECH}"
+                    echo "TIPO DE MAQUINA VIRTUAL: ${params.VM_TYPE}"
+                    echo "TAMAÑO DEL DISCO: ${params.DISK_SIZE}"
+                    echo "SISTEMA OPERATIVO: ${params.OS_TYPE}"
+                    echo "TIPO DE INFRAESTRUCTURA: ${params.INFRAESTRUCTURE_TYPE}"
+                    echo "LABEL: ${params.LABEL}"
+                    echo "INTERFACE DE RED: ${params.INTERFACE}"
+                    echo "SEGMENTO DE RED: ${params.NETWORK_SEGMENT}"
+                    echo "IP PRIVADA: ${params.PRIVATE_IP}"
+                    echo "REGLAS DE FIREWALL: ${params.FIREWALL_RULES}"
+                    echo "HABILITAR ELIMINACIÓN AUTOMÁTICA: ${params.CHECK_DELETE}"
+
+                    // Valores invisibles pero ejecutados
+                    echo "PAIS: CL"
+                    // El sistema operativo es modificable, así que se mantiene comentado para futuros cambios
+                    // echo "SISTEMA OPERATIVO: Windows"
+                    
+                    def snapshotVm = 'true'
+                    def snapshotOs = "${params.VM_NAME}-snapshot"
+                    def snapshotDisk = "${params.VM_NAME}-snapshot"
+
+                    echo "Snap de la VM: ${snapshotVm}"
+                    echo "Snap del SO: ${snapshotOs}"
+                    echo "Snap del disco: ${snapshotDisk}"
+                    echo "Label oculto: ${params.ENVIRONMENT}-Env"
+                    echo "Startup script: ${params.VM_NAME}-startup-script"
+                }
+            }
+        }
+    }
+}
