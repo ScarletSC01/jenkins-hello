@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    parameters {
+        // Parámetros que el usuario selecciona
+        string(name: 'PROYECT_ID', defaultValue: '', description: 'PROYECT_ID')
+        string(name: 'REGION', defaultValue: '', description: 'Ingrese la región (por ejemplo, us-central1)')
+        string(name: 'ZONE', defaultValue: '', description: 'Ingrese la zona (por ejemplo, us-central1-a)')
+        choice(name: 'ENVIRONMENT', choices: ['Beta', 'Prod', 'Dev'], description: 'Seleccionar ambiente')
+        string(name: 'VM_NAME', defaultValue: '', description: 'Ingrese el nombre de la VM')
+        choice(name: 'PROCESSOR_TECH', choices: ['n2', 'e2'], description: 'Seleccionar tecnología de procesador')
+        choice(name: 'VM_TYPE', choices: ['e2-standard', 'n2-standard'], description: 'Seleccionar tipo de máquina virtual')
+        string(name: 'DISK_SIZE', defaultValue: '', description: 'Tamaño del disco (GB)')
+        choice(name: 'OS_TYPE', choices: ['Windows-server-2025-dc', 'Windows-server-2022-dc'], description: 'Seleccionar sistema operativo')
+        choice(name: 'INFRAESTRUCTURE_TYPE', choices: ['Preemtible', 'On-demand'], description: 'Seleccionar tipo de infraestructura')
+        string(name: 'LABEL', defaultValue: '', description: 'Etiqueta para la VM')
+        string(name: 'INTERFACE', defaultValue: '', description: 'Interfaz de red')
+        string(name: 'NETWORK_SEGMENT', defaultValue: '', description: 'Segmento de red')
+        
+        // Parámetros con valor booleano (usando 'choice' para reemplazar booleano por opciones de selección)
+        choice(name: 'PRIVATE_IP', choices: ['Habilitar', 'Deshabilitar'], description: 'Configurar IP privada')
+        string(name: 'FIREWALL_RULES', defaultValue: '', description: 'Reglas de firewall')
+
+        // Parámetros de eliminación automática
+        choice(name: 'CHECK_DELETE', choices: ['Habilitar', 'Deshabilitar'], description: 'Activar/desactivar eliminación automática de recursos')
+    }
+
+    stages {
+        stage('Imprimir Valores de Configuración') {
+            steps {
+                script {
+                    // Imprimir los valores seleccionados por el usuario
+                    echo "PROYECT_ID: ${params.PROYECT_ID}"
+                    echo "REGIÓN A DESPLEGAR: ${params.REGION}"
+                    echo "ZONA A DESPLEGAR: ${params.ZONE}"
+                    echo "AMBIENTE: ${params.ENVIRONMENT}"
+                    echo "VM_NAME: ${params.VM_NAME}"
+                    echo "TIPO DE PROCESADOR: ${params.PROCESSOR_TECH}"
+                    echo "TIPO DE MAQUINA VIRTUAL: ${params.VM_TYPE}"
+                    echo "TAMAÑO DEL DISCO: ${params.DISK_SIZE}"
+                    echo "SISTEMA OPERATIVO: ${params.OS_TYPE}"
+                    echo "TIPO DE INFRAESTRUCTURA: ${params.INFRAESTRUCTURE_TYPE}"
+                    echo "LABEL: ${params.LABEL}"
+                    echo "INTERFACE DE RED: ${params.INTERFACE}"
+                    echo "SEGMENTO DE RED: ${params.NETWORK_SEGMENT}"
+                    echo "IP PRIVADA: ${params.PRIVATE_IP}"
+                    echo "REGLAS DE FIREWALL: ${params.FIREWALL_RULES}"
+                    echo "HABILITAR ELIMINACIÓN AUTOMÁTICA: ${params.CHECK_DELETE}"
+
+                    // Valores invisibles pero ejecutados
+                    echo "PAIS: PE"
+                    // El sistema operativo es modificable, así que se mantiene comentado para futuros cambios
+                    // echo "SISTEMA OPERATIVO: Windows"
+                    
+                    def snapshotVm = 'true'
+                    def snapshotOs = "${params.VM_NAME}-snapshot"
+                    def snapshotDisk = "${params.VM_NAME}-snapshot"
+
+                    echo "Snap de la VM: ${snapshotVm}"
+                    echo "Snap del SO: ${snapshotOs}"
+                    echo "Snap del disco: ${snapshotDisk}"
+                    echo "Label oculto: ${params.ENVIRONMENT}-Env"
+                    echo "Startup script: ${params.VM_NAME}-startup-script"
+                }
+            }
+        }
+    }
+}
